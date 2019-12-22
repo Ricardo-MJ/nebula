@@ -7,6 +7,8 @@
 #include "base/Base.h"
 #include "console/CmdProcessor.h"
 #include "time/Duration.h"
+#define Kilo 1000
+#define Million 1000000
 
 namespace nebula {
 namespace graph {
@@ -397,6 +399,29 @@ bool CmdProcessor::processClientCmd(folly::StringPiece cmd,
     return false;
 }
 
+double Count_Time(double t) {
+    double time;
+    if (t < Kilo)
+        time = t;
+    else if (t >= Kilo && t < Million)
+        time = (t / Kilo);
+    else if (t >= Million)
+        time = (t / Million);
+    return time;
+}
+
+
+std::string Time_Unit(double t) {
+    std::string s;
+    if (t < Kilo)
+        s = "us)\n";
+    else if (t >= Kilo && t <Million)
+        s = " ms)\n";
+    else if (t >= Million)
+        s = " s)\n";
+    return s;
+}
+
 
 void CmdProcessor::processServerCmd(folly::StringPiece cmd) {
     time::Duration dur;
@@ -414,16 +439,19 @@ void CmdProcessor::processServerCmd(folly::StringPiece cmd) {
             printResult(resp);
             std::cout << "Got " << resp.get_rows()->size()
                       << " rows (Time spent: "
-                      << resp.get_latency_in_us() << "/"
-                      << dur.elapsedInUSec() << " us)\n";
+                      << Count_Time(resp.get_latency_in_us()) << "/"
+                      << Count_Time(dur.elapsedInUSec())
+                      << Time_Unit(resp.get_latency_in_us());
         } else if (resp.get_rows()) {
             std::cout << "Empty set (Time spent: "
-                      << resp.get_latency_in_us() << "/"
-                      << dur.elapsedInUSec() << " us)\n";
+                      << Count_Time(resp.get_latency_in_us()) << "/"
+                      << Count_Time(dur.elapsedInUSec())
+                      << Time_Unit(resp.get_latency_in_us());
         } else {
             std::cout << "Execution succeeded (Time spent: "
-                      << resp.get_latency_in_us() << "/"
-                      << dur.elapsedInUSec() << " us)\n";
+                      << Count_Time(resp.get_latency_in_us()) << "/"
+                      << Count_Time(dur.elapsedInUSec())
+                      << Time_Unit(resp.get_latency_in_us());
         }
         std::cout << std::endl;
     } else if (res == cpp2::ErrorCode::E_SYNTAX_ERROR) {
