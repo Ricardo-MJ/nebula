@@ -397,8 +397,8 @@ bool CmdProcessor::processClientCmd(folly::StringPiece cmd,
     return false;
 }
 
-#define Kilo 1000
-#define Million 1000000
+#define Kilo 1000.0
+#define Million 1000000.0
 
 double Count_Time(double t) {
     double time;
