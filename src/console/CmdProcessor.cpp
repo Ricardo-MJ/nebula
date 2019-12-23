@@ -7,8 +7,6 @@
 #include "base/Base.h"
 #include "console/CmdProcessor.h"
 #include "time/Duration.h"
-#define Kilo 1000
-#define Million 1000000
 
 namespace nebula {
 namespace graph {
@@ -398,6 +396,9 @@ bool CmdProcessor::processClientCmd(folly::StringPiece cmd,
 
     return false;
 }
+
+#define Kilo 1000
+#define Million 1000000
 
 double Count_Time(double t) {
     double time;
